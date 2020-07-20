@@ -1,0 +1,7 @@
+obj
+.objs
+*.layout
+*.depend
+*.exe
+*.dll
+sfml

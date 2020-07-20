@@ -1,0 +1,10 @@
+name:Cut
+desc:Delete 2 sectors from target
+targets:1
+range:1
+sprite:0
+PREREQS
+END_PREREQS
+COMMANDS
+damage:2:0
+END_COMMANDS

@@ -1,0 +1,8 @@
+name:Warden
+maxSize:5
+speed:1
+//action:Thump
+sprite:1:52
+color:252:0:16
+symbol:w
+description:Slow and steady corporate defense program

@@ -1,0 +1,8 @@
+name:FireWall
+maxSize:20
+speed:2
+//action:Burn
+sprite:1:57
+color:252:98:0
+symbol:&
+description:Corporate lockdown program

@@ -1,0 +1,10 @@
+name:Stone
+desc:Range 3 \n Delete 1 sector from target
+targets:1
+range:3
+sprite:0
+PREREQS
+END_PREREQS
+COMMANDS
+damage:1:0
+END_COMMANDS

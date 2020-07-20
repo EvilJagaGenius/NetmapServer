@@ -1,0 +1,34 @@
+bkg:LinuxDNA_Resized.png
+cash:500
+music:hacking.ogg
+start_grid
+0000000000000000
+0000000000000000
+0000000000000000
+0000000000000000
+0000000000000000
+0000011111100000
+0000011111100000
+0000011111100000
+0000011111100000
+0000011111100000
+0000011111100000
+0000000000000000
+0000000000000000
+0000000000000000
+0000000000000000
+0000000000000000
+end_grid
+start_commands
+addUpload:6:10
+addUpload:9:10
+addDefender:FireWall:6:5:sent1
+addSector:sent1:7:5:0
+end_commands
+LOAD_CONVERSATION
+open~Opening|Alright, let's get to work on the basics.  This is the databattle grid. !CB:cont:exit
+cont~Go on|It's a representation of the computer's memory, divided into sectors.  What we're interested in is our ability to insert our own software into that memory.  Click on an upload zone then one of the programs in your inventory to load it in there.  Once you're ready, hit the DATABATTLE INITIALIZE button on the bottom.
+move1~Move 1|Alright.  Click the marked sectors next to your programs to move them around.  Get as close to that orange Sentinel as you can.  You won't be able to attack him, but by next turn you'll be in range.|When you move your programs, they'll leave sectors of occupied memory behind them.  Attacks against your programs will delete these sectors, and if all its memory sectors are deleted, the program will terminate.  Keep your programs alive by keeping them moving.
+move2~Move 2|Sweet, you're in range.  Move in with your Hack and Slingshot and frag that sucker.
+wrong~Wrong move|I don't think that looks right... go back and try it again.
+END_CONVERSATION

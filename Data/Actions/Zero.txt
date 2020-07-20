@@ -1,0 +1,10 @@
+name:Zero
+desc:Delete 1 grid sector
+targets:1
+range:1
+sprite:1
+PREREQS
+END_PREREQS
+COMMANDS
+zero:0
+END_COMMANDS

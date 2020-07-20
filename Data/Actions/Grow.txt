@@ -1,0 +1,10 @@
+name:Grow
+desc:Add 2 sectors to target
+targets:1
+range:1
+sprite:2
+PREREQS
+END_PREREQS
+COMMANDS
+grow:2:0
+END_COMMANDS
