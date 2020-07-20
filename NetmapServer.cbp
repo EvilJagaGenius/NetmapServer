@@ -30,8 +30,6 @@
 				<Linker>
 					<Add option="-s" />
 					<Add library="sfml/lib/libsfml-network.a" />
-					<Add library="sfml/lib/libsfml-window.a" />
-					<Add library="sfml/lib/libsfml-graphics.a" />
 					<Add library="sfml/lib/libsfml-system.a" />
 					<Add directory="sfml/lib" />
 				</Linker>

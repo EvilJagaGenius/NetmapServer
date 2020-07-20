@@ -1,3 +1,5 @@
+// Main file for Netmap dedicated server
+
 #include <iostream>
 #include <string>
 #include <SFML/Network.hpp>
@@ -20,7 +22,14 @@ int main(int argc, char** argv) {
     while (true) {
         sf::TcpSocket client;
         if (listener.accept(client) == sf::Socket::Done) {
+            string dummy;
             cout << "New connection received from " << client.getRemoteAddress() << std::endl;
+            // We need to send data back to the client.  Map info and such
+            sf::Packet newPacket = sf::Packet();
+            newPacket << "Logging into Netmap";
+            /*cout << "Enter anything to send a reply\n";
+            cin >> dummy;*/
+            client.send(newPacket);
         }
     }
 }
