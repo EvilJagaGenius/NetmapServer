@@ -30,6 +30,18 @@ int main(int argc, char** argv) {
             /*cout << "Enter anything to send a reply\n";
             cin >> dummy;*/
             client.send(newPacket);
+
+            newPacket.clear();
+            newPacket << "map:testMPBattle";
+            client.send(newPacket);
+
+            newPacket.clear();
+            newPacket << "players:2";
+            client.send(newPacket);
+
+            newPacket.clear();
+            newPacket << "youareplayer:0";
+            client.send(newPacket);
         }
     }
 }
