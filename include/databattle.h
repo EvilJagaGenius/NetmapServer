@@ -38,7 +38,8 @@ class DataBattle
         sf::Vector2i programHead;
         vector<DataBattlePiece*> pieces;
         int pieceCounter;
-
+        int playerCounter;
+        int maxPlayers;
 
         // Functions
         DataBattle();
@@ -55,7 +56,7 @@ class DataBattle
         string lookAt(int x, int y);
         int checkForVictory();
         void flipSector(sf::Vector2i coord);
-        void tick();
+        virtual void tick();
 
     protected:
 

@@ -1,8 +1,6 @@
 #include "databattle.h"
 
-DataBattle::DataBattle() {
-
-}
+DataBattle::DataBattle() {}
 
 DataBattle::DataBattle(string filename) {
     this->pieceCounter = 0;
@@ -40,11 +38,14 @@ void DataBattle::load() {
     this->destination = "title:";
 
     while(getline(textFile, line)) {
+        if (startsWith(line, "players:")) {
+            this->maxPlayers = stoi(line.substr(8));
+        }
         if (startsWith(line, "bkg:")) {  // Background
             this->bkgFilename = line.substr(4);
         }
         if (startsWith(line, "music:")) {  // Music
-            musicFilename = line.substr(6);
+            this->musicFilename = line.substr(6);
         }
 
         // Grid

@@ -13,6 +13,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
+					<Add directory="include" />
 				</Compiler>
 				<Linker>
 					<Add library="sfml/lib/libsfml-network-d.a" />
@@ -26,6 +27,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add directory="include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -47,20 +49,24 @@
 		<Unit filename="include/databattle.h" />
 		<Unit filename="include/databattlepiece.h" />
 		<Unit filename="include/networkdatabattle.h" />
+		<Unit filename="include/networkplayer.h" />
 		<Unit filename="include/player.h" />
 		<Unit filename="include/program.h" />
 		<Unit filename="include/programaction.h" />
 		<Unit filename="include/programsector.h" />
+		<Unit filename="include/serverdatabattle.h" />
 		<Unit filename="include/toolbox.h" />
 		<Unit filename="include/uploadzone.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/databattle.cpp" />
 		<Unit filename="src/databattlepiece.cpp" />
 		<Unit filename="src/networkdatabattle.cpp" />
+		<Unit filename="src/networkplayer.cpp" />
 		<Unit filename="src/player.cpp" />
 		<Unit filename="src/program.cpp" />
 		<Unit filename="src/programaction.cpp" />
 		<Unit filename="src/programsector.cpp" />
+		<Unit filename="src/serverdatabattle.cpp" />
 		<Unit filename="src/toolbox.cpp" />
 		<Unit filename="src/uploadzone.cpp" />
 		<Extensions>
