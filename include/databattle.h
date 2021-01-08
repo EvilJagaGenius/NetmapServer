@@ -51,7 +51,7 @@ class DataBattle
         void switchPrograms();
         void addPiece(DataBattlePiece* newPiece);
         void performAction(ProgramAction* action, vector<sf::Vector2i> targets);
-        string takeCommand(string command, int playerIndex);
+        virtual string takeCommand(string command, int playerIndex);
         string lookAt(sf::Vector2i coord);
         string lookAt(int x, int y);
         int checkForVictory();

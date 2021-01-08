@@ -354,73 +354,39 @@ string DataBattle::takeCommand(string command, int playerIndex) {
             return "ok";
         }
     } else if (startsWith(command, "DBI")) {
-        if (this->currentPlayerIndex == -1) {
-            cout << "Checking player readiness\n";
-            this->players[playerIndex]->readyup();
-            // Check to see if all players are ready; if so, start
-            bool allReady = true;
-            for (int i=0; i<this->players.size(); i++) {
-                Player* player = this->players[i];
-                if (!player->ready) {
-                    cout << "Player " << i << " not ready\n";
-                    allReady = false;
-                    break;
-                } else {
-                    cout << "Player " << i << " ready\n";
-                }
+        // Clients send DBI when they're ready to go.
+        this->players[playerIndex]->readyup();
+        // Check to see if all players are ready
+        bool allReady = true;
+        for (int i=0; i<this->playerCounter; i++) {
+            Player* player = this->players[i];
+            if (!player->ready) {
+                cout << "Player " << i << " not ready\n";
+                allReady = false;
+                break;
+            } else {
+                cout << "Player " << i << " ready\n";
             }
-            if (allReady) {
-                // Start
-                cout << "Starting\n";
-                this->switchTurns();
-            }
-            return "ok";
         }
+        if (allReady) {  // Start the game
+            cout << "Starting\n";
+            this->switchTurns();
+        }
+        return "ok";
+
+    } else if (startsWith(command, "disconnect")) {
+        Player* player = this->players[playerIndex];
+        delete player;
+        // Create a new dummy player in that slot
+        Player* dummyPlayer = new Player();
+        this->players[playerIndex] = dummyPlayer;
+        return "ok";
     }
 
     return "Not implemented";
 }
 
 string DataBattle::lookAt(sf::Vector2i coord) {
-    /*// Uploads
-    if (this->phase == 'u') {
-        for (int i=0; i<this->uploads.size(); i++) {
-            if (coord == this->uploads[i]) {
-                this->selectedUpload = i;
-                return "upload " + to_string(i);
-            }
-        }
-    }
-    // Cash pickups
-    for (sf::Vector2i c : this->cashPickups) {
-        if (c == coord) {
-            return "cash";
-        }
-    }
-    // Defenders
-    for (pair<string, DataBattlePiece*> p : this->defenders) {
-        for (ProgramSector* s : p.second->sectors) {
-            if (s->coord == coord) {
-                return "defender " + p.first;
-            }
-        }
-    }
-
-    // Friendlies
-    for (int i=0; i<this->friendlies.size(); i++) {
-        for (ProgramSector* s : this->friendlies[i]->sectors) {
-            if (s->coord == coord) {
-                return "friendly " + to_string(i);
-            }
-        }
-    }
-
-    // Tiles
-    if (this->grid[coord.x][coord.y] == 0) {
-        return "empty";
-    } else {
-        return "tile";
-    }*/
     return "Not implemented";
 }
 

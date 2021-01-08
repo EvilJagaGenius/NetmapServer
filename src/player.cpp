@@ -2,8 +2,7 @@
 
 Player::Player()
 {
-    //ctor
-
+    this->ready = false;
     this->giveStartingPrograms();
 }
 
@@ -54,3 +53,10 @@ void Player::addToUploadMap(string byteCoord, string pieceName) {
         this->uploadMap.emplace(byteCoord, newPiece);
     }
 }
+
+string Player::getNextCommand() {
+    //cout << "Player::getNextCommand()\n";
+    return "";
+}
+
+void Player::sendMessage(string message) {}

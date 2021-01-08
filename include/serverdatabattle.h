@@ -15,9 +15,11 @@ class ServerDataBattle : public DataBattle
         int port;
 
         ServerDataBattle();
-        ServerDataBattle(string filename);
+        ServerDataBattle(string filename, int port);
         virtual ~ServerDataBattle();
         void tick();
+        string takeCommand(string command, int playerIndex);
+        void broadcast(string command);
 
     protected:
 

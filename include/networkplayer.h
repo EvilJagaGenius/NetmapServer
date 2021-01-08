@@ -11,6 +11,8 @@ class NetworkPlayer : public Player
 
         NetworkPlayer();
         virtual ~NetworkPlayer();
+        string getNextCommand();
+        void sendMessage(string message);
 
     protected:
 
