@@ -154,7 +154,8 @@ void Program::deleteSectors() {
 
 void Program::load() {
     ifstream textFile;
-    textFile.open("Data\\Programs\\" + name + ".txt");
+    //cout << "Loading Program " << this->uploadName << '\n';
+    textFile.open("Data\\Programs\\" + this->uploadName + ".txt");
     string line;
     vector<string> splitLine;
     while (getline(textFile, line)) {
@@ -309,128 +310,10 @@ void Program::takeDamage(int damage) {
     }
 }
 
-/*void Program::amputate(Netmap_Playable* level, sf::Vector2i coord) {
-    cout << "Amputating\n";
-    // Ooh, I need some help from a CS professor...
-    // What do we need to do?
-    // If our head gets amputated, the program dies.
-    if (this->size > 0) {
-        bool dead = false;
-        if (coord == this->sectors[0]->coord) {
-            this->takeDamage(level, this->size);  // Kill self
-            dead = true;
-        }
-        if (!dead) {
-            // Do something, Taipu
-            ProgramSector* connectionToHead = nullptr;
-            ProgramSector* sectorToAmputate = nullptr;
-            vector<ProgramSector*> sectorStack;
-            sectorStack.push_back(this->sectors[0]);
-            // Go along all the sectors in this program, looking for a sector hit by the amputation
-            while (sectorStack.size() > 0) {
-                ProgramSector* currentSector = sectorStack.back();
-                sectorStack.pop_back();
-                for (ProgramSector* s : currentSector->links) {
-                    if (s->coord == coord) {  // If that's the sector that got hit with the amputation
-                        connectionToHead = currentSector;
-                        sectorToAmputate = s;
-                        break;
-                    }
-                }
-                if (connectionToHead != nullptr && sectorToAmputate != nullptr) {  // If we found our sector to amputate
-                    break;  // Break out of this search loop
-                }
-            }
-            // We've found our sector to amputate, now we need to delete it and all of the other sectors linked to it.
-            // Unlink sectorToAmputate from connectionToHead
-            for (int j=0; j<connectionToHead->links.size(); j++) {
-                if (connectionToHead->links[j]->coord == sectorToAmputate->coord) {
-                    connectionToHead->links.erase(connectionToHead->links.begin() + j);
-                    connectionToHead->numLinks--;
-                    break;
-                }
-            }
-
-            vector<ProgramSector*> deletionStack;
-            deletionStack.push_back(sectorToAmputate);
-            while (deletionStack.size() > 0) {
-                ProgramSector* currentSector = sectorStack.back();
-                sectorStack.pop_back();
-                for (ProgramSector* s : currentSector->links) {
-                    if (s != connectionToHead) {
-                        deletionStack.push_back(s);
-                        // Unlink currentSector from all these sectors
-                        for (int j=0; j<s->links.size(); j++) {
-                            if (s->links[j]->coord == currentSector->coord) {
-                                s->links.erase(s->links.begin() + j);
-                                s->numLinks--;
-                                break;
-                            }
-                        }
-                    }
-                }
-                // Delete currentSector
-                for (int i=0; i<this->sectors.size(); i++) {
-                    if (this->sectors[i] == currentSector) {
-                        delete this->sectors[i];
-                        this->sectors.erase(this->sectors.begin() + i);
-                        break;
-                    }
-                }
-            }
-        // After all the deletions, recalculate the size
-        this->size = this->sectors.size();
-        }
-    }
-    cout << "Done amputating\n";
-}
-
-
-void Program::grow(Netmap_Playable* level, int amtToGrow) {
-    cout << "Called Program::grow()\n";
-    for (int i=0; i<amtToGrow; i++) {
-        if (this->size < this->maxSize) {  // If we haven't hit max size
-            sf::Vector2i coordToAttach;
-            ProgramSector* previousSector;
-
-            for (ProgramSector* s : this->sectors) {
-                // See if there's a sector we can grow off of.  Check if any of the contiguous sectors are free.
-                sf::Vector2i coord = s->coord;
-                if (level->grid[coord.x][coord.y-1] != 0) {  // North
-                    coordToAttach = sf::Vector2<int>(coord.x, coord.y-1);
-                    previousSector = s;
-                    break;
-                } else if (level->grid[coord.x][coord.y+1] != 0) {  // South
-                    coordToAttach = sf::Vector2<int>(coord.x, coord.y+1);
-                    previousSector = s;
-                    break;
-                } else if (level->grid[coord.x+1][coord.y] != 0) {  // East
-                    coordToAttach = sf::Vector2<int>(coord.x+1, coord.y);
-                    previousSector = s;
-                    break;
-                } else if (level->grid[coord.x-1][coord.y-1] != 0) {  // West
-                    coordToAttach = sf::Vector2<int>(coord.x-1, coord.y);
-                    previousSector = s;
-                    break;
-                }
-            }
-            if (previousSector != nullptr) {  // If we found an empty contiguous sector
-                ProgramSector* newSector = new ProgramSector(coordToAttach, previousSector);
-                this->sectors.push_back(newSector);
-                this->size = this->sectors.size();
-            } else {  // We found no such contiguous sector and can't grow further
-                break;
-            }
-
-        } else {  // If we have hit max size, we can't grow any further
-            break;
-        }
-    }
-}*/
-
 void Program::prepForTurn() {
-    this->state = 'm';
-    this->currentActionIndex = -1;
+    cout << "Prepping " << this->name << " for turn\n";
+    this->state = 'm';  // Moving
+    this->currentActionIndex = -1;  // No action selected
     this->currentAction = nullptr;
-    this->currentMove = 0;
+    this->currentMove = 0;  // Hasn't moved yet
 }

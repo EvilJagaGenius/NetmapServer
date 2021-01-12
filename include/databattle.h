@@ -47,8 +47,8 @@ class DataBattle
         virtual ~DataBattle();
         void load();
         void addPlayer(Player* player);
-        void switchTurns();
-        void switchPrograms();
+        virtual void switchTurns();
+        virtual void switchPrograms();
         void addPiece(DataBattlePiece* newPiece);
         void performAction(ProgramAction* action, vector<sf::Vector2i> targets);
         virtual string takeCommand(string command, int playerIndex);

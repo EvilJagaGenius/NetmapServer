@@ -396,7 +396,7 @@ string DataBattle::lookAt(int x, int y) {
 }
 
 int DataBattle::checkForVictory() {
-    // We're checking to see if there's only one player with pieces still on the board.
+    // Returns -1 if no player has won, otherwise returns the index of the winning player
     int pieceCounts[this->players.size()];
     for (int i=0; i<this->players.size(); i++) {
         pieceCounts[i] = 0;
@@ -409,7 +409,7 @@ int DataBattle::checkForVictory() {
         }
     }
 
-    for (int i=0; i<this->players.size(); i++) {
+    for (int i=0; i<this->playerCounter; i++) {
         if (pieceCounts[i] > 0) {
             if (winner == -1) {  // If we've haven't found a winner yet (someone with 1+ pieces on the grid)
                 winner = i;

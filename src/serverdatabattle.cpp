@@ -52,7 +52,7 @@ void ServerDataBattle::tick() {
         }
 
         newPacket.clear();
-        newPacket << ("players:" + to_string(this->playerCounter));
+        newPacket << ("players:" + to_string(this->maxPlayers));  // This is causing issues in the client, trying to render upload zones belonging to players that aren't there
         client->send(newPacket);
 
         newPacket.clear();
@@ -60,27 +60,25 @@ void ServerDataBattle::tick() {
         client->send(newPacket);
 
         // Bring the new player up to speed, what pieces are where
-        newPacket.clear();
         for (DataBattlePiece* p : this->pieces) {
+            newPacket.clear();
             if (p->pieceType == 'u') {  // Upload
                 sf::Vector2i coord = p->sectors[0]->coord;
                 newPacket <<
-                ("addUpload:" + to_string(coord.x) + ":"
-                 + to_string(coord.y) + ":"
-                 + to_string(p->owner) + "\n");
+                ("addUpload:" + getByteCoord(coord) + ":"
+                 + to_string(p->owner));
 
             } else if (p->pieceType == 'p') {  // Normal program
                 sf::Vector2i coord = p->sectors[0]->coord;
                 newPacket <<
-                ("addUpload:" + p->uploadName + ":" +
-                 to_string(coord.x) + ":" +
-                 to_string(coord.y) + ":" +
+                ("addProgram:" + p->uploadName + ":" +
+                 getByteCoord(coord) + ":" +
                  to_string(p->owner) + ":" +
                  p->name + "\n");
                  // Add commands for adding sectors to the program here
             }
+            client->send(newPacket);
         }
-        client->send(newPacket);
 
         client->setBlocking(false);
         // Create a new NetworkPlayer, give it client as its socket, and add it to the list of players
@@ -106,10 +104,10 @@ void ServerDataBattle::tick() {
 }
 
 string ServerDataBattle::takeCommand(string command, int playerIndex) {
-    cout << "Command: " << command << '\n';
-    if (startsWith(command, "upload")) {
-        vector<string> splitCommand = splitString(command, ':');
+    cout << "ServerCommand: " << command << '\n';
+    if (startsWith(command, "upload")) {  // Upload
         // 1: Owner, 2: Byte coord, 3: Program type, 4: Name
+        vector<string> splitCommand = splitString(command, ':');
         sf::Vector2i targetCoord = readByteCoord(splitCommand[2]);
         // Do some checking on the coord, make sure there's actually an upload there
         DataBattlePiece* uploadZone = nullptr;
@@ -136,9 +134,7 @@ string ServerDataBattle::takeCommand(string command, int playerIndex) {
                     }
                 }
             }
-
             // Add the program
-            //Program* newProgram = new Program(PROGRAM_DB[programType]);  // Clone one from PROGRAM_DB
             Program* newProgram = new Program(programType);  // Create a new one from the definition file
             newProgram->move(targetCoord, true);
             newProgram->owner = playerIndex;
@@ -162,8 +158,7 @@ string ServerDataBattle::takeCommand(string command, int playerIndex) {
             return "upload failed";
         }
 
-    } else if (startsWith(command, "move")) {
-        // Do something, Taipu
+    } else if (startsWith(command, "move")) {  // Move
         // 1: Piece name, 2: direction
         vector<string> splitCommand = splitString(command, ':');
         string pieceName = splitCommand[1];
@@ -173,6 +168,8 @@ string ServerDataBattle::takeCommand(string command, int playerIndex) {
         for (DataBattlePiece* piece : this->pieces) {
             if (piece->name == pieceName) {
                 sourcePiece = piece;
+                //cout << "Found sourcePiece\n";
+                //cout << "currentMove: " << sourcePiece->currentMove << ", speed: " << sourcePiece->speed << '\n';
                 break;
             }
         }
@@ -198,11 +195,14 @@ string ServerDataBattle::takeCommand(string command, int playerIndex) {
                 }
             }
             if (occupyingPiece != nullptr) {  // If something is occupying that coord
+                //cout << "Found occupyingPiece, failing\n";
                 return "no";  // Fail
                 // Implement different stuff for credit pickups, flags, etc.
             }
             // If we're here, there's nothing occupying the coord we want to move on.
             if (this->grid[coordToCheck.x][coordToCheck.y]) {  // If the grid square is not empty
+                //cout << "Valid grid sector\n";
+                this->broadcast("move:" + pieceName + ":" + splitCommand[2]);  // Inform all the players
                 sourcePiece->move(coordToCheck, false);
                 // Add code for gridwalk, negawalk, gridburn
                 if (sourcePiece->currentMove >= sourcePiece->speed) {
@@ -211,13 +211,12 @@ string ServerDataBattle::takeCommand(string command, int playerIndex) {
             }
             return "ok";
         }
-    } else if (startsWith(command, "action")) {
+    } else if (startsWith(command, "action")) {  // Action
         // 1: Piece name, 2: Action index, >2: Target coords
         vector<string> splitCommand = splitString(command, ':');
         string pieceName = splitCommand[1];
         int actionIndex = stoi(splitCommand[2]);
-        // Do something, Taipu
-        // Find our source piece
+        // Find source piece
         DataBattlePiece* sourcePiece = nullptr;
         for (DataBattlePiece* piece : this->pieces) {
             if (piece->name == pieceName) {
@@ -238,6 +237,7 @@ string ServerDataBattle::takeCommand(string command, int playerIndex) {
             i++;
         }
         // Perform the action on those targets
+        this->broadcast(command);  // Don't bother parsing the command, just send it back to everyone
         this->performAction(action, targetCoords);
 
         // Once we've used that action, that piece is done
@@ -248,16 +248,25 @@ string ServerDataBattle::takeCommand(string command, int playerIndex) {
 
         return "ok";
 
-    } else if (startsWith(command, "noaction")) {
-        if (startsWith(command, "noaction:")) {  // If the user specified a particular piece, hence the semicolon
-            return "Not implemented";
-        } else {  // No piece specified, NA the current piece
-            this->currentProgram->noAction();
+    } else if (startsWith(command, "noaction")) {  // No Action
+        // 1: Piece name
+        vector<string> splitCommand = splitString(command, ':');
+        string pieceName = splitCommand[1];
+        DataBattlePiece* sourcePiece = nullptr;
+        for (DataBattlePiece* piece : this->pieces) {
+            if (piece->name == pieceName) {
+                sourcePiece = piece;
+                break;
+            }
+        }
+        if (sourcePiece != nullptr && sourcePiece->owner == playerIndex) {
+            sourcePiece->noAction();
+            this->broadcast("noaction:" + pieceName);
             this->switchPrograms();
             return "ok";
         }
-    } else if (startsWith(command, "DBI")) {
-        // Clients send DBI when they're ready to go.
+    } else if (startsWith(command, "DBI")) {  // Databattle Initialize
+        // No arguments.  Clients send DBI when they're ready to go.
         this->players[playerIndex]->readyup();
         // Check to see if all players are ready
         bool allReady = true;
@@ -275,25 +284,134 @@ string ServerDataBattle::takeCommand(string command, int playerIndex) {
             cout << "Starting\n";
             this->broadcast("DBI:");  // Broadcast DBI to all players
             this->switchTurns();
-            this->players[this->currentPlayerIndex]->sendMessage("startTurn:" + to_string(this->currentPlayerIndex));  // Notify the player their turn has started
         }
         return "ok";
 
-    } else if (startsWith(command, "disconnect")) {
+    } else if (startsWith(command, "disconnect")) {  // Disconnect
         Player* player = this->players[playerIndex];
         delete player;
         // Create a new dummy player in that slot
         Player* dummyPlayer = new Player();
         this->players[playerIndex] = dummyPlayer;
         return "ok";
+        // There's probably better solutions than this but I'm not sure what
     }
 
     return "Not implemented";
 }
 
 void ServerDataBattle::broadcast(string command) {
+    cout << "Broadcasting: " << command << '\n';
     // Broadcast a command to all connected players
     for (Player* player : this->players) {
         player->sendMessage(command);
     }
+}
+
+void ServerDataBattle::switchPrograms() {
+    // Given that each player gives commands to their pieces by name, I don't think this is important
+    // Might need to rework how statuses are ticked though
+    cout << "Server switching programs\n";
+    cout << "Victory check: " << this->checkForVictory() << '\n';
+    // See if there's another one of the player's programs ready to use
+    bool foundNextPiece = false;
+    for (int i=0; i<this->pieces.size(); i++) {
+        DataBattlePiece* piece = this->pieces[i];
+        if (piece->pieceType == 'p' && piece->controller == this->currentPlayerIndex && piece->state == 'm') {
+            // If they have a valid piece ready to go... do something, Taipu
+            foundNextPiece = true;
+        }
+    }
+    if (!foundNextPiece) {  // If there wasn't a valid piece, ready to go
+        // We need to switch turns.  Do something, Taipu
+        this->switchTurns();
+    }
+    /*if (this->currentProgram != nullptr) {
+        this->currentProgram->tickStatuses();  // Maybe we want to call this someplace else
+        cout << "Statuses ticked\n";
+    }
+    cout << "Victory check: " << this->checkForVictory() << '\n';
+    if (this->nextProgram == nullptr) {
+        this->switchTurns();
+    } else {
+        // Switch focus to nextProgram
+        this->currentProgram = this->nextProgram;
+        this->currentProgramIndex = this->nextProgramIndex;
+        // Search until you find another of the player's programs, ready to use
+        for (int i=0; i<this->pieces.size(); i++) {
+            int index = i % this->pieces.size();
+            DataBattlePiece* piece = this->pieces[index];
+            if (piece->pieceType == 'p') {
+                // Set nextProgram to that, maybe add a 'next' marker to it
+                this->nextProgram = piece;
+                this->nextProgramIndex = index;
+            }
+        }
+        // If you can't find another one of those programs, nextProgram = nullptr
+        if (this->currentProgramIndex == this->nextProgramIndex) {
+            nextProgram = nullptr;
+            nextProgramIndex = -1;
+        }
+    }*/
+}
+
+void ServerDataBattle::switchTurns() {
+    // If necessary, insert code to delete dead pieces
+    cout << "Server switching turns\n";
+
+    if (this->currentPlayerIndex == -1) {  // If we're starting from the upload phase
+        // Delete all upload zones
+        cout << "Deleting upload zones\n";
+
+        bool killedAllUploads = false;
+        DataBattlePiece* uploadZone = nullptr;
+        int uploadIndex = -1;
+        while (killedAllUploads == false) {
+            killedAllUploads = true;
+            uploadZone = nullptr;
+            uploadIndex = -1;
+            for (int i=0; i<this->pieces.size(); i++) {
+                if (this->pieces[i]->pieceType == 'u') {
+                    uploadZone = this->pieces[i];
+                    uploadIndex = i;
+                    killedAllUploads = false;
+                    break;
+                }
+            }
+            if (uploadZone != nullptr) {
+                this->pieces.erase(this->pieces.begin() + uploadIndex);  // Remove from pieces
+                delete uploadZone;  // Deallocate memory
+            }
+        }
+        cout << "Upload deletion complete\n";
+    }
+
+    cout << "Searching for first program to use\n";
+    bool foundFirstProgram = false;
+    while (!foundFirstProgram) {  // This could go infinite
+        this->currentPlayerIndex++;
+        this->currentPlayerIndex = this->currentPlayerIndex % this->players.size();
+        // Find a first program
+        for (int i=0; i<this->pieces.size(); i++) {
+            // Loop through all the pieces, prep all pieces controlled by the player, select one to be first
+            DataBattlePiece* piece = this->pieces[i];
+            cout << "Type: " << piece->pieceType << '\n';
+            cout << "Name: " << piece->name << '\n';
+            cout << "Controller: " << piece->controller << '\n';
+            if (piece->controller == currentPlayerIndex) {
+                piece->prepForTurn();
+                if (piece->pieceType == 'p') {  // Or avatar or user, etc
+                    if (!foundFirstProgram) {
+                        foundFirstProgram = true;
+                        this->nextProgram = piece;
+                        this->nextProgramIndex = i;
+                    }
+                }
+            }
+        }
+    }
+    this->switchPrograms();
+    this->players[this->currentPlayerIndex]->sendMessage("startTurn:" + to_string(this->currentPlayerIndex));  // Notify the player their turn has started
+    // We could broadcast that as well.  Not sure.
+    //cout << "Done switching turns\n";
 }

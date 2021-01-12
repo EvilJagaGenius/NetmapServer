@@ -20,6 +20,8 @@ class ServerDataBattle : public DataBattle
         void tick();
         string takeCommand(string command, int playerIndex);
         void broadcast(string command);
+        void switchPrograms();
+        void switchTurns();
 
     protected:
 
