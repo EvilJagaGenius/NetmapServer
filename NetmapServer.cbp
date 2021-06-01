@@ -48,6 +48,7 @@
 		</Linker>
 		<Unit filename="include/databattle.h" />
 		<Unit filename="include/databattlepiece.h" />
+		<Unit filename="include/lobby.h" />
 		<Unit filename="include/networkdatabattle.h" />
 		<Unit filename="include/networkplayer.h" />
 		<Unit filename="include/player.h" />
@@ -60,6 +61,7 @@
 		<Unit filename="main.cpp" />
 		<Unit filename="src/databattle.cpp" />
 		<Unit filename="src/databattlepiece.cpp" />
+		<Unit filename="src/lobby.cpp" />
 		<Unit filename="src/networkdatabattle.cpp" />
 		<Unit filename="src/networkplayer.cpp" />
 		<Unit filename="src/player.cpp" />

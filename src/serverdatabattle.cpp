@@ -1,7 +1,7 @@
 #include "serverdatabattle.h"
 
 ServerDataBattle::ServerDataBattle() {}
-ServerDataBattle::ServerDataBattle(string filename, int port) {
+ServerDataBattle::ServerDataBattle(string filename) {
     this->pieceCounter = 0;
     this->filename = filename;
     this->programStartingState = nullptr;
@@ -16,81 +16,15 @@ ServerDataBattle::ServerDataBattle(string filename, int port) {
         }
     }
 
-    this->port = port;
-    this->listener = new sf::TcpListener();
-    this->listener->listen(this->port);
-    this->listener->setBlocking(false);
-    cout << "Listening on port " << this->port << '\n';
-
     this->load();
 }
 
-ServerDataBattle::~ServerDataBattle()
-{
-    // Do cleanup code here
+ServerDataBattle::~ServerDataBattle() {
+    //delete this->listener;
 }
 
 void ServerDataBattle::tick() {
     //cout << "ServerDataBattle::tick()\n";
-    // Listen for new connections
-    sf::TcpSocket* client = new sf::TcpSocket();
-    if (this->listener->accept(*client) == sf::Socket::Done) {  // If a new client connected
-        cout << "New connection received from " << client->getRemoteAddress() << std::endl;
-        // We need to send data back to the client.  Map info and such
-        sf::Packet newPacket = sf::Packet();
-        newPacket << "Logging into Netmap";  // We could replace this with a MotD
-        client->send(newPacket);
-
-        newPacket.clear();
-        newPacket << ("map:" + this->filename);
-        client->send(newPacket);
-
-        int playerIndex = -1;  // Spectator by default
-        if (this->playerCounter < this->maxPlayers) {  // If there's room for another player
-            playerIndex = this->playerCounter;
-            this->playerCounter++;  // Increment the counter
-        }
-
-        newPacket.clear();
-        newPacket << ("players:" + to_string(this->maxPlayers));  // This is causing issues in the client, trying to render upload zones belonging to players that aren't there
-        client->send(newPacket);
-
-        newPacket.clear();
-        newPacket << ("playerIndex:" + to_string(playerIndex));
-        client->send(newPacket);
-
-        // Bring the new player up to speed, what pieces are where
-        for (DataBattlePiece* p : this->pieces) {
-            newPacket.clear();
-            if (p->pieceType == 'u') {  // Upload
-                sf::Vector2i coord = p->sectors[0]->coord;
-                newPacket <<
-                ("addUpload:" + getByteCoord(coord) + ":"
-                 + to_string(p->owner));
-
-            } else if (p->pieceType == 'p') {  // Normal program
-                sf::Vector2i coord = p->sectors[0]->coord;
-                newPacket <<
-                ("addProgram:" + p->uploadName + ":" +
-                 getByteCoord(coord) + ":" +
-                 to_string(p->owner) + ":" +
-                 p->name + "\n");
-                 // Add commands for adding sectors to the program here
-            }
-            client->send(newPacket);
-        }
-
-        client->setBlocking(false);
-        // Create a new NetworkPlayer, give it client as its socket, and add it to the list of players
-        NetworkPlayer* newPlayer = new NetworkPlayer();
-        newPlayer->socket = client;
-        this->players.push_back(newPlayer);
-
-    } else {  // Connection failed for whatever reason
-        //cout << "Connection failed\n";
-        delete client;
-    }
-
     for (int i=0; i<this->players.size(); i++) {  // Loop through players
         // Read the commands they sent us
         Player* player = this->players[i];
@@ -99,7 +33,6 @@ void ServerDataBattle::tick() {
             this->takeCommand(command, i);
         }
     }
-
     // More stuff later
 }
 
@@ -242,9 +175,7 @@ string ServerDataBattle::takeCommand(string command, int playerIndex) {
 
         // Once we've used that action, that piece is done
         sourcePiece->noAction();
-        if (sourcePiece == this->currentProgram) {  // Switch programs if necessary
-            this->switchPrograms();
-        }
+        this->switchPrograms();
 
         return "ok";
 
@@ -290,11 +221,10 @@ string ServerDataBattle::takeCommand(string command, int playerIndex) {
     } else if (startsWith(command, "disconnect")) {  // Disconnect
         Player* player = this->players[playerIndex];
         delete player;
-        // Create a new dummy player in that slot
-        Player* dummyPlayer = new Player();
-        this->players[playerIndex] = dummyPlayer;
+        player = nullptr;
         return "ok";
-        // There's probably better solutions than this but I'm not sure what
+        // Alternatively, we could set their status to "Disconnected" and let the Lobby handle deleting the player... I think this works though
+        // We have multiple options here
     }
 
     return "Not implemented";
@@ -326,33 +256,6 @@ void ServerDataBattle::switchPrograms() {
         // We need to switch turns.  Do something, Taipu
         this->switchTurns();
     }
-    /*if (this->currentProgram != nullptr) {
-        this->currentProgram->tickStatuses();  // Maybe we want to call this someplace else
-        cout << "Statuses ticked\n";
-    }
-    cout << "Victory check: " << this->checkForVictory() << '\n';
-    if (this->nextProgram == nullptr) {
-        this->switchTurns();
-    } else {
-        // Switch focus to nextProgram
-        this->currentProgram = this->nextProgram;
-        this->currentProgramIndex = this->nextProgramIndex;
-        // Search until you find another of the player's programs, ready to use
-        for (int i=0; i<this->pieces.size(); i++) {
-            int index = i % this->pieces.size();
-            DataBattlePiece* piece = this->pieces[index];
-            if (piece->pieceType == 'p') {
-                // Set nextProgram to that, maybe add a 'next' marker to it
-                this->nextProgram = piece;
-                this->nextProgramIndex = index;
-            }
-        }
-        // If you can't find another one of those programs, nextProgram = nullptr
-        if (this->currentProgramIndex == this->nextProgramIndex) {
-            nextProgram = nullptr;
-            nextProgramIndex = -1;
-        }
-    }*/
 }
 
 void ServerDataBattle::switchTurns() {
@@ -414,4 +317,38 @@ void ServerDataBattle::switchTurns() {
     this->players[this->currentPlayerIndex]->sendMessage("startTurn:" + to_string(this->currentPlayerIndex));  // Notify the player their turn has started
     // We could broadcast that as well.  Not sure.
     //cout << "Done switching turns\n";
+}
+
+void ServerDataBattle::addPlayer(NetworkPlayer*& newPlayer) {  // Want to use a reference to a pointer so we can set it to nullptr in Lobby... I think
+    cout << "ServerDataBattle::addPlayer()\n";
+    // Get the player up to speed
+    this->players.push_back(newPlayer);
+    newPlayer->sendMessage("map:" + this->filename);
+
+    int playerIndex = -1;  // Spectator by default
+    if (this->playerCounter < this->maxPlayers) {  // If there's room for another player
+        playerIndex = this->playerCounter;
+        this->playerCounter++;  // Increment the counter
+    }
+    newPlayer->sendMessage("players:" + to_string(this->maxPlayers));  // This is causing issues in the client, trying to render upload zones belonging to players that aren't there
+    newPlayer->sendMessage("playerIndex:" + to_string(playerIndex));
+
+    // Bring the new player up to speed, what pieces are where
+    for (DataBattlePiece* p : this->pieces) {
+        if (p->pieceType == 'u') {  // Upload
+            sf::Vector2i coord = p->sectors[0]->coord;
+            newPlayer->sendMessage
+            ("addUpload:" + getByteCoord(coord)
+             + ":" + to_string(p->owner));
+
+        } else if (p->pieceType == 'p') {  // Normal program
+            sf::Vector2i coord = p->sectors[0]->coord;
+            newPlayer->sendMessage
+            ("addProgram:" + p->uploadName + ":" +
+             getByteCoord(coord) + ":" +
+             to_string(p->owner) + ":" +
+             p->name + "\n");
+             // Add commands for adding sectors to the program here
+        }
+    }
 }

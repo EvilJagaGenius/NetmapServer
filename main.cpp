@@ -6,15 +6,16 @@
 #include <vector>
 #include <SFML/Network.hpp>
 
-#include "serverdatabattle.h"
+#include "serverdatabattle.h"  // Do we need this anymore?
+#include "lobby.h"
 
 using namespace std;
 
-ServerDataBattle* DB;
+Lobby* LOBBY;
 
 void cleanup() {  // Called when the server closes
     cout << "Cleaning up...\n";
-    delete DB;
+    delete LOBBY;
     sleep(1);
 }
 
@@ -33,8 +34,11 @@ int main(int argc, char** argv) {
     cout << '\n';
 
     cout << "Starting Netmap 1.0 server\n";
-    DB = new ServerDataBattle("testMPBattle", PORT);  // Create our databattle
+    // Okay, right now we're creating a databattle.  But we can do more than that, we can build a lobby system.  How?
+    // I need to sketch this out...
+    //DB = new ServerDataBattle("testMPBattle", PORT);  // Create our databattle
+    LOBBY = new Lobby(PORT);
     while (true) {
-        DB->tick();
+        LOBBY->tick();
     }
 }

@@ -18,6 +18,7 @@ class Player
         unordered_map<string, DataBattlePiece*> uploadMap;
         int credits;
         bool ready;
+        string name;
         string color;  // Store the color as a hex value in a string instead of as an sf::Color
         queue<string> cmdQueue;
 

@@ -2,6 +2,7 @@
 
 NetworkPlayer::NetworkPlayer() {
     this->ready = false;
+    this->status = "";
 }
 
 NetworkPlayer::~NetworkPlayer() {

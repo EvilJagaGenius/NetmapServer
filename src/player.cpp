@@ -1,12 +1,13 @@
 #include "player.h"
 
-Player::Player()
-{
+Player::Player() {
     this->ready = false;
     this->giveStartingPrograms();
+    this->name = "Player";
+    this->color = "ffffff";
 }
 
-Player::~Player(){
+Player::~Player() {
     // Delete any entries still in uploadMap
     for (pair<string, DataBattlePiece*> p : this->uploadMap) {
         if (p.second != nullptr) {
