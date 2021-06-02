@@ -91,6 +91,22 @@ string ServerDataBattle::takeCommand(string command, int playerIndex) {
             return "upload failed";
         }
 
+    } else if (startsWith(command, "buyProgram")) {
+        // 1: Piece type
+        vector<string> splitCommand = splitString(command, ':');
+        Program programToBuy = Program(splitCommand[1]);  // Don't need a permanent copy
+        Player* player = this->players[playerIndex];
+        if (player->credits >= programToBuy.cost) {
+            player->credits -= programToBuy.cost;
+            if (player->programs.count(splitCommand[1]) > 0) {  // If the player already has one of those
+                player->programs[splitCommand[1]] += 1;  // Give them another one
+            } else {  // If this is their first
+                player->programs.insert({{splitCommand[1], 1}});  // Insert a new element in their program list
+            }
+            // Do we need to notify the player?
+            return "ok";
+        }
+        return "failed";
     } else if (startsWith(command, "move")) {  // Move
         // 1: Piece name, 2: direction
         vector<string> splitCommand = splitString(command, ':');
@@ -330,8 +346,10 @@ void ServerDataBattle::addPlayer(NetworkPlayer*& newPlayer) {  // Want to use a 
         playerIndex = this->playerCounter;
         this->playerCounter++;  // Increment the counter
     }
+    // We should tweak the above block.  What if someone gets disconnected mid-game?
     newPlayer->sendMessage("players:" + to_string(this->maxPlayers));  // This is causing issues in the client, trying to render upload zones belonging to players that aren't there
     newPlayer->sendMessage("playerIndex:" + to_string(playerIndex));
+    newPlayer->sendMessage("credits:" + to_string(this->creditLimit));
 
     // Bring the new player up to speed, what pieces are where
     for (DataBattlePiece* p : this->pieces) {

@@ -172,6 +172,8 @@ void Program::load() {
             this->speed = stoi(splitLine[1]);
         } else if (startsWith(line, "maxSpeed")) {
             this->maxSpeed = stoi(splitLine[1]);
+        } else if (startsWith(line, "cost")) {
+            this->cost = stoi(splitLine[1]);
         } else if (startsWith(line, "action")) {
             string actionName = splitLine[1];
             ProgramAction* newAction = new ProgramAction();

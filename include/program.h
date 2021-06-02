@@ -21,26 +21,8 @@ class ProgramAction;
 class Program: public DataBattlePiece
 {
     public:
-        // Variables
-        //string programType;
-        //string name;
-        //string screenName;
-        //string description;
-        //sf::Vector2i spriteCoord;
-        //sf::Color color;
-        //vector<ProgramSector*> sectors;
-        //vector<ProgramAction*> actions;
-
-        //int size;  // Is size is reserved in C++?
-        //int maxSize;
-        //int speed;
-        //int maxSpeed;
-        //int currentMove;
-        //int currentActionIndex;
-        //ProgramAction* currentAction;
-
-        //char state;
-        //string programType;
+        // See DataBattlePiece for the rest of the variables
+        int cost;
 
         // Functions
         Program(string programType);
