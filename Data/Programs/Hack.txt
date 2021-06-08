@@ -2,6 +2,7 @@ name:Hack
 maxSize:3
 speed:2
 maxSpeed:10
+cost:500
 action:Slice
 //action:Slash
 sprite:0:7

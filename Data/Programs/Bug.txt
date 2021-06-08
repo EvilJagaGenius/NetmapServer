@@ -2,6 +2,7 @@ name:Bug
 maxSize:1
 speed:5
 maxSpeed:10
+cost:250
 action:Glitch
 //action:Swarm1
 sprite:1:4

@@ -10,6 +10,7 @@ Program::Program(string programType) {
     this->owner = '0';
     this->invisibilityTimer = 0;
     this->visible = true;
+    this->cost = 0;
 
     this->load();
 }

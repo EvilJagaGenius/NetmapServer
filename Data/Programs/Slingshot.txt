@@ -3,6 +3,7 @@ maxSize:2
 speed:2
 maxSpeed:10
 action:Stone
+cost:500
 //action:Sling1
 sprite:1:33
 color:0:217:165

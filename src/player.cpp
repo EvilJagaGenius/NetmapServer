@@ -5,6 +5,7 @@ Player::Player() {
     this->giveStartingPrograms();
     this->name = "Player";
     this->color = "ffffff";
+    this->credits = 5000;
 }
 
 Player::~Player() {

@@ -2,6 +2,7 @@ name:Bit-Man
 maxSize:3
 speed:2
 maxSpeed:10
+cost:750
 action:Zero
 action:One
 sprite:0:16

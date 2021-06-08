@@ -91,11 +91,13 @@ string ServerDataBattle::takeCommand(string command, int playerIndex) {
             return "upload failed";
         }
 
-    } else if (startsWith(command, "buyProgram")) {
+    } else if (startsWith(command, "buy")) {
         // 1: Piece type
         vector<string> splitCommand = splitString(command, ':');
         Program programToBuy = Program(splitCommand[1]);  // Don't need a permanent copy
         Player* player = this->players[playerIndex];
+        cout << "player->credits " << to_string(player->credits) << '\n';
+        cout << "programToBuy.cost " << to_string(programToBuy.cost) << '\n';
         if (player->credits >= programToBuy.cost) {
             player->credits -= programToBuy.cost;
             if (player->programs.count(splitCommand[1]) > 0) {  // If the player already has one of those
@@ -103,7 +105,8 @@ string ServerDataBattle::takeCommand(string command, int playerIndex) {
             } else {  // If this is their first
                 player->programs.insert({{splitCommand[1], 1}});  // Insert a new element in their program list
             }
-            // Do we need to notify the player?
+            cout << "Telling player to buy program\n";
+            player->sendMessage("buy:" + splitCommand[1]);  // Notify the player that they successfully bought the program
             return "ok";
         }
         return "failed";
