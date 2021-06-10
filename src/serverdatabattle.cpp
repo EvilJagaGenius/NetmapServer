@@ -20,6 +20,7 @@ ServerDataBattle::ServerDataBattle(string filename) {
 }
 
 ServerDataBattle::~ServerDataBattle() {
+    //cout << "~ServerDataBattle()\n";
     //delete this->listener;
 }
 
@@ -28,9 +29,11 @@ void ServerDataBattle::tick() {
     for (int i=0; i<this->players.size(); i++) {  // Loop through players
         // Read the commands they sent us
         Player* player = this->players[i];
-        string command = player->getNextCommand();
-        if (command.size() > 0) {
-            this->takeCommand(command, i);
+        if (player != nullptr) {
+            string command = player->getNextCommand();
+            if (command.size() > 0) {
+                this->takeCommand(command, i);
+            }
         }
     }
     // More stuff later
@@ -238,9 +241,11 @@ string ServerDataBattle::takeCommand(string command, int playerIndex) {
         return "ok";
 
     } else if (startsWith(command, "disconnect")) {  // Disconnect
-        Player* player = this->players[playerIndex];
-        delete player;
-        player = nullptr;
+        if (playerIndex < this->maxPlayers) {
+            this->playerCounter--;
+        }
+        this->players[playerIndex]->status = "Disconnected";
+        this->players[playerIndex] = nullptr;
         return "ok";
         // Alternatively, we could set their status to "Disconnected" and let the Lobby handle deleting the player... I think this works though
         // We have multiple options here
@@ -338,11 +343,11 @@ void ServerDataBattle::switchTurns() {
     //cout << "Done switching turns\n";
 }
 
-void ServerDataBattle::addPlayer(NetworkPlayer*& newPlayer) {  // Want to use a reference to a pointer so we can set it to nullptr in Lobby... I think
+void ServerDataBattle::addPlayer(NetworkPlayer* newPlayer) {
     cout << "ServerDataBattle::addPlayer()\n";
     // Get the player up to speed
     this->players.push_back(newPlayer);
-    newPlayer->sendMessage("map:" + this->filename);
+    newPlayer->sendMessage("netdb:" + this->filename + ":" + to_string(this->creditLimit) + ":0:0:0");
 
     int playerIndex = -1;  // Spectator by default
     if (this->playerCounter < this->maxPlayers) {  // If there's room for another player

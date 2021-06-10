@@ -20,7 +20,7 @@ class ServerDataBattle : public DataBattle
         void broadcast(string command);
         void switchPrograms();
         void switchTurns();
-        void addPlayer(NetworkPlayer*& player);
+        void addPlayer(NetworkPlayer* player);
 
     protected:
 

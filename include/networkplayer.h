@@ -8,7 +8,6 @@ class NetworkPlayer : public Player
 {
     public:
         sf::TcpSocket* socket;
-        string status; // If they're free, in a databattle, etc
 
         NetworkPlayer();
         virtual ~NetworkPlayer();

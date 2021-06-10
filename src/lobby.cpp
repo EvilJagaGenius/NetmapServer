@@ -16,8 +16,8 @@ Lobby::Lobby(int portNum) {
 
     this->port = portNum;
     this->listener = new sf::TcpListener();
-    this->listener->listen(this->port);
     this->listener->setBlocking(false);
+    this->listener->listen(this->port);
     cout << "Listening on port " << this->port << '\n';
 }
 
@@ -32,6 +32,8 @@ Lobby::~Lobby() {
 }
 
 void Lobby::tick() {
+    // Do cleanup work
+    this->tickCleanup();
     // Tick each DataBattle
     for (int i=0; i<this->maxDataBattles; i++) {
         if (this->dbs[i] != nullptr) {
@@ -43,6 +45,7 @@ void Lobby::tick() {
     if (this->listener->accept(*client) == sf::Socket::Done) {  // If a new client connected
         cout << "New connection received from " << client->getRemoteAddress() << std::endl;
         // Create a new NetworkPlayer, give it client as its socket, and add it to the list of players
+        client->setBlocking(false);
         NetworkPlayer* newPlayer = new NetworkPlayer();
         newPlayer->socket = client;
         this->players.push_back(newPlayer);
@@ -66,6 +69,40 @@ void Lobby::tick() {
     }
 }
 
+void Lobby::tickCleanup() {
+    // What does this do?  Checks to see if any of the players have disconnected or are nullptrs, if so, deletes them.
+    // For databattles, it checks if anyone is still playing, and if no one is, deletes the DB
+    bool keepGoing = true;
+    while (keepGoing) {
+        keepGoing = false;
+        // Clean up players
+        for (int i=0; i<this->players.size(); i++) {
+            if (this->players[i] == nullptr) {
+                this->players.erase(this->players.begin()+i);
+                keepGoing = true;
+                break;
+            } else if (startsWith(this->players[i]->status, "Disconnected")) {
+                delete this->players[i];
+                this->players.erase(this->players.begin()+i);
+                keepGoing = true;
+                break;
+            }
+        }
+        // Clean up DBs
+        for (int i=0; i<this->maxDataBattles; i++) {
+            if (this->dbs[i] != nullptr) {
+                if (this->dbs[i]->playerCounter == 0) {  // Kill the DB if there's no one playing
+                    // We need to notify the spectators or something too
+                    this->dbs[i]->broadcast("shutdown:");
+                    //cout << "Deleting DB " << this->dbs[i] << '\n';
+                    delete this->dbs[i];
+                    this->dbs[i] = nullptr;
+                }
+            }
+        }
+    }
+}
+
 void Lobby::welcomePlayer(NetworkPlayer* player) {
     // Catching the player up to speed.  What other players are connected, what DataBattles are live, etc.
     sf::Packet packet = sf::Packet();
@@ -76,7 +113,7 @@ void Lobby::welcomePlayer(NetworkPlayer* player) {
         ServerDataBattle* db = this->dbs[i];
         if (db != nullptr) {
             // ID#|players/max players|game mode|map
-            packetString += ':' + i + '|'+ db->playerCounter + '/' + db->maxPlayers + '|' + "gamemode" + '|' + db->filename;
+            packetString += (":" + to_string(i) + "|" + to_string(db->playerCounter) + "/" + to_string(db->maxPlayers) + "|gamemode|" + db->filename);
         }
     }
     if (this->dbs.size() == 0) {
@@ -157,37 +194,5 @@ void Lobby::broadcast(string command) {
     // Broadcast a command to all connected players
     for (Player* player : this->players) {
         player->sendMessage(command);
-    }
-}
-
-void Lobby::tickCleanup() {
-    // What does this do?  Checks to see if any of the players have disconnected or are nullptrs, if so, deletes them.
-    // Does the same for databattles
-    bool keepGoing = true;
-    while (keepGoing) {
-        keepGoing = false;
-        // Clean up players
-        for (int i=0; i<this->players.size(); i++) {
-            if (this->players[i] == nullptr) {
-                this->players.erase(this->players.begin()+i);
-                keepGoing = true;
-                break;
-            } else if (startsWith(this->players[i]->status, "Disconnected")) {
-                delete this->players[i];
-                this->players.erase(this->players.begin()+i);
-                keepGoing = true;
-                break;
-            }
-        }
-        // Clean up DBs
-        for (int i=0; i<this->dbs.size(); i++) {
-            ServerDataBattle* db = this->dbs[i];
-            if ((db != nullptr) && (db->playerCounter == 0)) {  // Kill the DB if there's no one playing
-                // We need to notify the spectators or something too
-                //db->broadcast("shutdown:");
-                delete db;
-                this->dbs[i] == nullptr;
-            }
-        }
     }
 }

@@ -20,6 +20,7 @@ class Player
         bool ready;
         string name;
         string color;  // Store the color as a hex value in a string instead of as an sf::Color
+        string status; // If they're free, in a databattle, etc
         queue<string> cmdQueue;
 
         // Functions
