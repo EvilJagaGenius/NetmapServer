@@ -1,0 +1,10 @@
+name:Bash
+desc:Delete 5 sectors from target
+targets:1
+range:1
+sprite:0
+PREREQS
+END_PREREQS
+COMMANDS
+damage:5:0
+END_COMMANDS

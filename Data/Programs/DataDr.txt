@@ -1,6 +1,6 @@
 name:Data Doctor
-maxSize:4
-speed:2
+maxSize:5
+speed:4
 maxSpeed:10
 cost:750
 action:Grow

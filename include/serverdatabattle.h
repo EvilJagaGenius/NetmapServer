@@ -11,6 +11,8 @@ class ServerDataBattle : public DataBattle
 {
     public:
         int creditLimit;
+        bool shop;
+        bool characters;
 
         ServerDataBattle();
         ServerDataBattle(string filename);

@@ -1,0 +1,11 @@
+name:Data Doctor Pro
+maxSize:8
+speed:5
+maxSpeed:10
+cost:1500
+action:Grow
+action:Surgery
+sprite:1:12
+color:0:0:255
+symbol:d
+description:Twice the power of Data Doctor

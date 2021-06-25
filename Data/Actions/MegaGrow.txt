@@ -1,0 +1,10 @@
+name:MegaGrow
+desc:Add 4 sectors to target
+targets:1
+range:1
+sprite:2
+PREREQS
+END_PREREQS
+COMMANDS
+grow:4:0
+END_COMMANDS

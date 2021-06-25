@@ -162,7 +162,13 @@ string Lobby::takeCommand(string command, int playerIndex) {
                 this->dbs[i] = newDB;
                 // Do something about setting the rules and such
                 if (splitCommand.size() > 2) {
+                    newDB->shop = true;
                     newDB->creditLimit = stoi(splitCommand[2]);
+                }
+                if (splitCommand.size() > 3) {
+                    if (splitCommand[3][0] != '0') {
+                        newDB->characters = true;
+                    }
                 }
 
                 // Add the player to the new DB they've created

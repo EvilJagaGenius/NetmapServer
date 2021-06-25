@@ -1,0 +1,12 @@
+GEMMA
+The Brawler
+Short-fused, fiery-tempered, unofficial leader of the trial squad.  Prefers tanky programs and meta boosters.  In her free time, she users her analyst's mind to win pro fighting games.  She mains Shang Tsung.
+PROGRAMS
+Brawler:1
+Golem3:1
+Dog3:2
+Warden2:1
+DataDrPro:1
+Hack2:1
+Turbo:1
+END_PROGRAMS

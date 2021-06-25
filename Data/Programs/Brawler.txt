@@ -1,0 +1,11 @@
+name:Brawler
+maxSize:5
+speed:3
+maxSpeed:10
+cost:5000
+action:Phaser
+action:MegaByte
+sprite:1:20
+color:0:199:252
+symbol:h
+description:Gemma's avatar, capable at range with a mean left hook

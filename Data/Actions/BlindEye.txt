@@ -1,0 +1,10 @@
+name:Phaser
+desc:Range 2 \n Gives target Invisible 1
+targets:1
+range:2
+sprite:2
+PREREQS
+END_PREREQS
+COMMANDS
+status:i:1:0
+END_COMMANDS

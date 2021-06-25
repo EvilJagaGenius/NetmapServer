@@ -1,0 +1,11 @@
+name:Boost
+desc:Increases Speed by 1 \n Deletes 1 sector from user
+targets:1
+range:1
+sprite:2
+PREREQS
+END_PREREQS
+COMMANDS
+boostspeed:1:0
+damage:1:-1
+END_COMMANDS

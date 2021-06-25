@@ -99,8 +99,8 @@ string ServerDataBattle::takeCommand(string command, int playerIndex) {
         vector<string> splitCommand = splitString(command, ':');
         Program programToBuy = Program(splitCommand[1]);  // Don't need a permanent copy
         Player* player = this->players[playerIndex];
-        cout << "player->credits " << to_string(player->credits) << '\n';
-        cout << "programToBuy.cost " << to_string(programToBuy.cost) << '\n';
+        //cout << "player->credits " << to_string(player->credits) << '\n';
+        //cout << "programToBuy.cost " << to_string(programToBuy.cost) << '\n';
         if (player->credits >= programToBuy.cost) {
             player->credits -= programToBuy.cost;
             if (player->programs.count(splitCommand[1]) > 0) {  // If the player already has one of those
@@ -113,6 +113,14 @@ string ServerDataBattle::takeCommand(string command, int playerIndex) {
             return "ok";
         }
         return "failed";
+    } else if (startsWith(command, "character:")) {
+        // 1: Character name
+        if (this->characters) {
+            Player* player = this->players[playerIndex];
+            string charName = command.substr(10);  // Need to check if this exists
+            player->loadCharacter(charName);
+            player->sendMessage("character:" + charName);  // At the moment, echo the command back
+        }
     } else if (startsWith(command, "move")) {  // Move
         // 1: Piece name, 2: direction
         vector<string> splitCommand = splitString(command, ':');
@@ -347,7 +355,7 @@ void ServerDataBattle::addPlayer(NetworkPlayer* newPlayer) {
     cout << "ServerDataBattle::addPlayer()\n";
     // Get the player up to speed
     this->players.push_back(newPlayer);
-    newPlayer->sendMessage("netdb:" + this->filename + ":" + to_string(this->creditLimit) + ":0:0:0");
+    newPlayer->sendMessage("netdb:" + this->filename + ":" + to_string(this->creditLimit) + ":" + to_string(this->characters) + ":0:0");
 
     int playerIndex = -1;  // Spectator by default
     if (this->playerCounter < this->maxPlayers) {  // If there's room for another player

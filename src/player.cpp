@@ -27,6 +27,32 @@ void Player::giveStartingPrograms() {
                           {"Watchman", 10}});
 }
 
+void Player::loadCharacter(string characterName) {
+    this->programs.clear();
+
+    ifstream textFile;
+    textFile.open("Data\\Characters\\" + characterName + ".txt");
+    string line;
+    char loading = '0';
+
+    while (getline(textFile, line)) {
+        if (loading == 'p') {
+            if (startsWith(line, "END_PROGRAMS")) {
+                loading = '0';
+            } else {
+                vector<string> splitLine = splitString(line, ':');
+                this->programs.insert({{splitLine[0], stoi(splitLine[1])}});
+            }
+        }
+        if (startsWith(line, "PROGRAMS")) {
+            loading = 'p';
+            continue;
+        }
+    }
+
+    textFile.close();
+}
+
 void Player::readyup() {
     this->ready = true;
 }

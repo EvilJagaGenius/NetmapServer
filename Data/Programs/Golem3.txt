@@ -1,0 +1,10 @@
+name:Golem.Stone
+maxSize:7
+speed:3
+maxSpeed:10
+cost:5000
+action:Crash
+sprite:1:20
+color:0:199:252
+symbol:h
+description:Nothing can stand in its way

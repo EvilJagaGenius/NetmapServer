@@ -1,0 +1,10 @@
+name:Surgery
+desc:Increases Max Size by 1
+targets:1
+range:1
+sprite:2
+PREREQS
+END_PREREQS
+COMMANDS
+boostsize:1:0
+END_COMMANDS

@@ -1,0 +1,10 @@
+name:Warden+
+maxSize:6
+speed:2
+maxSpeed:10
+cost:2000
+action:Bash
+sprite:1:53
+color:252:0:16
+symbol:w
+description:Get out of its way

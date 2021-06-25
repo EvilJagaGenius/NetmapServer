@@ -1,0 +1,11 @@
+name:Hack 2.0
+maxSize:3
+speed:2
+maxSpeed:10
+cost:1500
+action:Slice
+action:Dice
+sprite:1:8
+color:0:199:252
+symbol:h
+description:Bigger, faster, and better attacks

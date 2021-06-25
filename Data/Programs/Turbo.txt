@@ -1,0 +1,10 @@
+name:Turbo
+maxSize:5
+speed:4
+maxSpeed:10
+cost:750
+action:Boost
+sprite:1:16
+color:0:0:255
+symbol:d
+description:Speed up your programs

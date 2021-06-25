@@ -2,6 +2,7 @@ name:Sentinel
 maxSize:2
 speed:1
 maxSpeed:10
+cost:250
 action:Cut
 sprite:1:40
 color:252:152:0

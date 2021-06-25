@@ -1,6 +1,8 @@
 name:Warden
 maxSize:5
 speed:1
+maxSpeed:10
+cost:750
 //action:Thump
 sprite:1:52
 color:252:0:16

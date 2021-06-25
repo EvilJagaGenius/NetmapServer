@@ -1,0 +1,11 @@
+name:Dice
+desc:Size Req 3 \n Delete 3 sectors from target
+targets:1
+range:1
+sprite:0
+PREREQS
+size:3
+END_PREREQS
+COMMANDS
+damage:3:0
+END_COMMANDS

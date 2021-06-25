@@ -5,7 +5,7 @@ maxSpeed:10
 cost:500
 action:Slice
 //action:Slash
-sprite:1:7
+sprite:1:9
 color:0:199:252
 symbol:h
 description:Basic attack program

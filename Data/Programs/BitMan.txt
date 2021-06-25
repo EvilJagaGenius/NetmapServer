@@ -5,7 +5,7 @@ maxSpeed:10
 cost:750
 action:Zero
 action:One
-sprite:0:16
+sprite:1:16
 color:182:252:0
 symbol:~
 description:Locks or frees grid sectors

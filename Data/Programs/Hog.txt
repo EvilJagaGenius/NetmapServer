@@ -1,0 +1,9 @@
+name:Memory Hog
+maxSize:35
+speed:5
+maxSpeed:10
+cost:2000
+sprite:1:18
+color:182:252:0
+symbol:~
+description:Massive memory-filling bloatware

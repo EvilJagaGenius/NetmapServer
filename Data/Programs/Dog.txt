@@ -1,0 +1,9 @@
+name:Guard Dog
+maxSize:3
+speed:3
+maxSpeed:10
+//action:Byte
+sprite:1:44
+color:252:187:0
+symbol:d
+description:Corporate node watchdog
