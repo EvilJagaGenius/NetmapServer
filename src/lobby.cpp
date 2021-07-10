@@ -22,6 +22,7 @@ Lobby::Lobby(int portNum) {
 }
 
 Lobby::~Lobby() {
+    cout << "~Lobby()\n";
     delete this->listener;
     for (int i=0; i<this->maxDataBattles; i++) {
         if (this->dbs[i] != nullptr) {
@@ -32,8 +33,10 @@ Lobby::~Lobby() {
 }
 
 void Lobby::tick() {
+    //cout << "Lobby::tick()\n";
     // Do cleanup work
     this->tickCleanup();
+    //cout << "Done with cleanup\n";
     // Tick each DataBattle
     for (int i=0; i<this->maxDataBattles; i++) {
         if (this->dbs[i] != nullptr) {
@@ -55,6 +58,7 @@ void Lobby::tick() {
     } else {  // Connection failed for whatever reason
         delete client;
     }
+    //cout << "Done listening for connections\n";
 
     // Get packets from the players
     for (int i=0; i<this->players.size(); i++) {  // Loop through players
@@ -67,6 +71,7 @@ void Lobby::tick() {
             }
         }
     }
+    //cout << "Exiting Lobby::tick()\n";
 }
 
 void Lobby::tickCleanup() {
@@ -82,7 +87,7 @@ void Lobby::tickCleanup() {
                 keepGoing = true;
                 break;
             } else if (startsWith(this->players[i]->status, "Disconnected")) {
-                delete this->players[i];
+                delete this->players[i];  // We don't delete in ServerDataBattle, we do it here
                 this->players.erase(this->players.begin()+i);
                 keepGoing = true;
                 break;

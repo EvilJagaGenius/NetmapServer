@@ -509,6 +509,61 @@ void DataBattle::performAction(ProgramAction* action, vector<sf::Vector2i> targe
             if (this->grid[targetCoord.x][targetCoord.y] == 0) {
                 this->grid[targetCoord.x][targetCoord.y] = 1;
             }
+        } else if (splitCommand[0] == "boostsize") {
+            int amt = stoi(splitCommand[1]);
+            sf::Vector2i targetCoord = targets[stoi(splitCommand[2])];
+            for (DataBattlePiece* piece : this->pieces) {
+                for (ProgramSector* sector : piece->sectors) {
+                    if ((sector->coord.x == targetCoord.x) && (sector->coord.y == targetCoord.y)) {
+                        piece->maxSize += amt;
+                    }
+                }
+            }
+        } else if (splitCommand[0] == "boostspeed") {
+            int amt = stoi(splitCommand[1]);
+            sf::Vector2i targetCoord = targets[stoi(splitCommand[2])];
+            for (DataBattlePiece* piece : this->pieces) {
+                for (ProgramSector* sector : piece->sectors) {
+                    if ((sector->coord.x == targetCoord.x) && (sector->coord.y == targetCoord.y)) {
+                        piece->speed += amt;
+                    }
+                }
+            }
+        } else if (splitCommand[0] == "warp") {
+            // Ooh, I completely forget how to do this
+            // Let's do something simple.  Take the delta between the two points and move every sector of the target by that amount.  Don't worry about amputation yet.
+            sf::Vector2i targetCoord1 = targets[stoi(splitCommand[1])];
+            sf::Vector2i targetCoord2 = targets[stoi(splitCommand[2])];
+            DataBattlePiece* targetPiece = nullptr;
+            for (DataBattlePiece* piece : this->pieces) {
+                for (ProgramSector* sector : piece->sectors) {
+                    if ((sector->coord.x == targetCoord1.x) && (sector->coord.y == targetCoord1.y)) {
+                        targetPiece = piece;
+                    }
+                }
+            }
+            if (targetPiece != nullptr) {
+                sf::Vector2i delta = targetCoord2 - targetCoord1;  // I have no idea if SFML supports this
+                for (ProgramSector* sector : targetPiece->sectors) {
+                    sector->coord += delta;
+                }
+            }
+        } else if (splitCommand[0] == "status") {
+            char statusType = splitCommand[1][0];
+            int amt = stoi(splitCommand[2]);
+            sf::Vector2i targetCoord = targets[stoi(splitCommand[3])];
+            for (DataBattlePiece* piece : this->pieces) {
+                for (ProgramSector* sector : piece->sectors) {
+                    if ((sector->coord.x == targetCoord.x) && (sector->coord.y == targetCoord.y)) {
+                        piece->statuses[statusType] += amt;
+                    }
+                }
+            }
+        } else if (splitCommand[0] == "upload") {
+            sf::Vector2i targetCoord = targets[stoi(splitCommand[3])];
+            // Okay, we need a new upload zone
+            UploadZone* newUpload = new UploadZone(targetCoord.x, targetCoord.y, user->controller);
+            this->addPiece(newUpload);
         }
         // Add more here.  Like healing, warping, zero and one, applying statuses
     }

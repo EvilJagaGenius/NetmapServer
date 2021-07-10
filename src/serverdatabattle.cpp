@@ -20,7 +20,7 @@ ServerDataBattle::ServerDataBattle(string filename) {
 }
 
 ServerDataBattle::~ServerDataBattle() {
-    //cout << "~ServerDataBattle()\n";
+    cout << "~ServerDataBattle()\n";
     //delete this->listener;
 }
 
@@ -266,7 +266,9 @@ void ServerDataBattle::broadcast(string command) {
     cout << "Broadcasting: " << command << '\n';
     // Broadcast a command to all connected players
     for (Player* player : this->players) {
-        player->sendMessage(command);
+        if (player != nullptr) {
+            player->sendMessage(command);
+        }
     }
 }
 
