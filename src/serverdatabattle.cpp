@@ -201,7 +201,7 @@ string ServerDataBattle::takeCommand(string command, int playerIndex) {
         }
         // Perform the action on those targets
         this->broadcast(command);  // Don't bother parsing the command, just send it back to everyone
-        this->performAction(action, targetCoords);
+        this->performAction(sourcePiece, action, targetCoords);  // I'm not sure how much error checking we need on this
 
         // Once we've used that action, that piece is done
         sourcePiece->noAction();

@@ -1,0 +1,12 @@
+name:Upload
+desc:Size Req 2 \n Sacrifice 2 sectors, create an upload zone in target sector
+targets:1
+range:1
+sprite:1
+PREREQS
+size:2
+END_PREREQS
+COMMANDS
+upload:0
+damage:2:-1
+END_COMMANDS

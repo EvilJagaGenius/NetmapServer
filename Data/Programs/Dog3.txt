@@ -4,7 +4,7 @@ speed:4
 maxSpeed:10
 cost:2000
 action:MegaByte
-sprite:1:45
+sprite:1:44
 color:252:187:0
 symbol:d
 description:Ravenous, bloodthirsty corporate canine

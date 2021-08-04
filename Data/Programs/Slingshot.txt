@@ -4,7 +4,7 @@ speed:2
 maxSpeed:10
 cost:500
 action:Stone
-//action:Sling1
+action:Sling
 sprite:1:33
 color:0:217:165
 symbol:h

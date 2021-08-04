@@ -1,0 +1,11 @@
+name:Fiddle
+maxSize:3
+speed:3
+maxSpeed:10
+cost:2400
+action:Tweak
+action:Twiddle
+sprite:1:16
+color:0:0:255
+symbol:d
+description:Fiddle with the speed and size of your programs

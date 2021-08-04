@@ -335,7 +335,7 @@ string DataBattle::takeCommand(string command, int playerIndex) {
             i++;
         }
         // Perform the action on those targets
-        this->performAction(action, targetCoords);
+        this->performAction(sourcePiece, action, targetCoords);
 
         // Once we've used that action, that piece is done
         sourcePiece->noAction();
@@ -434,7 +434,7 @@ void DataBattle::addPiece(DataBattlePiece* newPiece) {
     this->pieceCounter++;
 }
 
-void DataBattle::performAction(ProgramAction* action, vector<sf::Vector2i> targets) {
+void DataBattle::performAction(DataBattlePiece* user, ProgramAction* action, vector<sf::Vector2i> targets) {
     // We could use a vector or a straight-up array.  Not sure which works better.
     cout << "Performing action " << action->actionName << '\n';
     for (string command : action->commands) {
@@ -442,12 +442,16 @@ void DataBattle::performAction(ProgramAction* action, vector<sf::Vector2i> targe
         // Do something, Taipu
         if (splitCommand[0] == "damage") {  // Damage
             int health = stoi(splitCommand[1]);
-            sf::Vector2i targetCoord = targets[stoi(splitCommand[2])];
-            for (DataBattlePiece* piece : this->pieces) {
-                for (ProgramSector* sector : piece->sectors) {
-                    if ((sector->coord.x == targetCoord.x) && (sector->coord.y == targetCoord.y)) {
-                        cout << "Found target " << piece->name << '\n';
-                        piece->takeDamage(health);
+            if (stoi(splitCommand[2]) == -1) {
+                user->takeDamage(health);
+            } else {
+                sf::Vector2i targetCoord = targets[stoi(splitCommand[2])];
+                for (DataBattlePiece* piece : this->pieces) {
+                    for (ProgramSector* sector : piece->sectors) {
+                        if ((sector->coord.x == targetCoord.x) && (sector->coord.y == targetCoord.y)) {
+                            cout << "Found target " << piece->name << '\n';
+                            piece->takeDamage(health);
+                        }
                     }
                 }
             }
@@ -529,6 +533,16 @@ void DataBattle::performAction(ProgramAction* action, vector<sf::Vector2i> targe
                     }
                 }
             }
+        } else if (splitCommand[0] == "setspeed") {  // Used in Clog's Hang.  Possibly useful for others, the Spider series?
+            int newVal = stoi(splitCommand[1]);
+            sf::Vector2i targetCoord = targets[stoi(splitCommand[2])];
+            for (DataBattlePiece* piece : this->pieces) {
+                for (ProgramSector* sector : piece->sectors) {
+                    if ((sector->coord.x == targetCoord.x) && (sector->coord.y == targetCoord.y)) {
+                        piece->speed = newVal;
+                    }
+                }
+            }
         } else if (splitCommand[0] == "warp") {
             // Ooh, I completely forget how to do this
             // Let's do something simple.  Take the delta between the two points and move every sector of the target by that amount.  Don't worry about amputation yet.
@@ -543,7 +557,7 @@ void DataBattle::performAction(ProgramAction* action, vector<sf::Vector2i> targe
                 }
             }
             if (targetPiece != nullptr) {
-                sf::Vector2i delta = targetCoord2 - targetCoord1;  // I have no idea if SFML supports this
+                sf::Vector2i delta = targetCoord2 - targetCoord1;
                 for (ProgramSector* sector : targetPiece->sectors) {
                     sector->coord += delta;
                 }
@@ -565,7 +579,6 @@ void DataBattle::performAction(ProgramAction* action, vector<sf::Vector2i> targe
             UploadZone* newUpload = new UploadZone(targetCoord.x, targetCoord.y, user->controller);
             this->addPiece(newUpload);
         }
-        // Add more here.  Like healing, warping, zero and one, applying statuses
     }
 }
 

@@ -1,0 +1,10 @@
+name:Hang
+desc:Size Req. 4, Range 3 \n Reduces target's speed to 0
+targets:1
+range:3
+sprite:2
+PREREQS
+END_PREREQS
+COMMANDS
+setspeed:0:0
+END_COMMANDS

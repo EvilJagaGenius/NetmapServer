@@ -1,0 +1,11 @@
+name:Shinobi
+maxSize:4
+speed:4
+maxSpeed:10
+cost:5000
+action:Upload
+action:MegaByte
+sprite:1:20
+color:0:199:252
+symbol:s
+description:Winter's avatar, can create upload zones

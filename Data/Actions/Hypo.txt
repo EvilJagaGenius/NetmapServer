@@ -1,0 +1,10 @@
+name:Hypo
+desc:Range 3 \n Add 2 sectors to target
+targets:1
+range:3
+sprite:2
+PREREQS
+END_PREREQS
+COMMANDS
+grow:2:0
+END_COMMANDS

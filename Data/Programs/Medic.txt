@@ -1,0 +1,10 @@
+name:Medic
+maxSize:5
+speed:4
+maxSpeed:10
+cost:750
+action:Hypo
+sprite:1:10
+color:0:0:255
+symbol:d
+description:Heal your programs from a distance

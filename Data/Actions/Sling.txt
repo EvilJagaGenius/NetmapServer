@@ -1,0 +1,10 @@
+name:Sling
+desc:Range 3 \n Warp target to target sector
+targets:2
+range:3
+sprite:1
+PREREQS
+END_PREREQS
+COMMANDS
+warp:0
+END_COMMANDS

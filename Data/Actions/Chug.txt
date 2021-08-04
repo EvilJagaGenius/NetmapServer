@@ -1,0 +1,10 @@
+name:Chug
+desc:Range 3 \n Slows target by 2
+targets:1
+range:3
+sprite:2
+PREREQS
+END_PREREQS
+COMMANDS
+boostspeed:-1:0
+END_COMMANDS
